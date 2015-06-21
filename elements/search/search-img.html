@@ -1,0 +1,48 @@
+<dom-module id="search-img">
+	<style type="text/css">
+		:host {
+			height: 100vh;
+		}
+		.resultTitle {
+			color: #494949;
+	    	font-size: 18px;
+	    	font-weight: normal;
+	    	text-decoration: none;
+	    	cursor: pointer;
+		}
+
+		.resultSite {
+			color: #7BAC52;
+	    	font-size: 12px;
+	    	line-height: 2px;
+	    	font-weight: normal;
+	    	cursor: pointer;
+		}
+
+		.resultDescription {
+			color: #949494;
+	    	font-size: 14px;
+	    	margin-bottom: 50px;
+		}
+
+		paper-material {
+			  width: 98%;
+			  margin: 16px auto;
+			  padding: 8px;
+			  background-color: white;
+		}
+	</style>
+	<template>
+		<div class="horizontal layout">
+			<template is="dom-repeat" items="{{query}}">
+				<paper-card img="{{item.src}}"></paper-card>
+			</template>
+		</div>
+	</template>
+</dom-module>
+
+<script type="text/javascript">
+	Polymer({
+		is: "search-img",
+	})
+</script>

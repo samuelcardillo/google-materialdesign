@@ -1,0 +1,200 @@
+<dom-module id="google-search">
+	<style type="text/css">
+		:host{
+			height: 100vh;
+			background: linear-gradient(rgb(214, 227, 231), lightblue);
+		}
+
+		#googleLogo {
+			margin-top: 8px;
+			width: 80px; 
+			height: 25px;
+		}
+
+		paper-toolbar {
+			background: url('../../images/search-bkg.png');
+			background-size: 100%;
+			padding-left: 65px;
+		}
+		paper-toolbar.has-shadow {
+			 height: 120px;
+		}
+		paper-toolbar /deep/ #bottomBar {
+			padding-left: 65px;
+			height: 48px;
+			background-color: #385762;
+			color: white;
+		}
+
+		#searchContainer {
+			margin-left: 24px;
+			padding-left: 8px;
+			width: 60%;
+			border-radius: 4px;
+			border: 0px;
+			height: 40px;
+			background-color: white;
+			--paper-input-container-color: white;
+			color: black;
+		}
+
+		#searchContainer > input {
+			border: 0px;
+			font-size: 16px;
+		}
+		#searchContainer > input:focus {
+			outline: none;
+		}
+
+		@media (max-width: 800px) {
+			paper-toolbar {
+				background: url('../../images/search-bkg.png');
+				background-size: 100%;
+				padding-left: 8px;
+			}
+		}
+
+		@media (max-width: 601px) {
+			paper-toolbar /deep/ #bottomBar {
+				padding-left: 0px;
+			}
+		}
+	</style>
+	<template>
+		<iron-media-query query="(max-width: 601px)" query-matches="{{isMobile}}"></iron-media-query>
+
+		<iron-ajax
+			url="http://37.187.218.147/google/backend.php"
+			method="POST"
+			body='q=lol'
+			handle-as="json"
+			on-response="_resultSearch"
+			debounceDuration="300">
+		</iron-ajax>
+
+		<paper-header-panel mode="waterfall-tall">
+			<paper-toolbar>
+				<img id="googleLogo" src="../../images/google.png" on-click="_goHome">
+				<div id="searchContainer" class="horizontal layout center flex">
+					<input class="self-stretch flex" value="{{searchquery::input}}"/>
+					<iron-icon icon="search"></iron-icon>
+				</div>
+				<template is="dom-if" if="{{!isMobile}}">
+					<paper-icon-button icon="settings" style="padding: 12px;"></paper-icon-button>
+					<paper-icon-button icon="apps" style="padding: 12px;"></paper-icon-button>
+					<span style="padding: 12px;">iam@samuelcardillo.com</span>
+					<paper-icon-button icon="arrow-drop-down" style="padding: 12px;"></paper-icon-button>
+				</template>
+				<div class="bottom self-end flex">
+					<paper-tabs scrollable attr-for-selected="data-route" selected="{{searchType}}">
+			            <paper-tab data-route="web">WEB</paper-tab>
+			            <paper-tab data-route="images">IMAGES</paper-tab>
+			            <paper-tab data-route="videos">VIDEOS</paper-tab>
+			            <paper-tab data-route="maps">MAPS</paper-tab>
+			            <paper-tab data-route="more">MORE</paper-tab>
+			            <paper-tab data-route="tools">SEARCH TOOLS</paper-tab>
+		          	</paper-tabs>
+				</div>
+			</paper-toolbar>
+
+			<neon-animated-pages attr-for-selected="data-route" selected="{{searchType}}">
+				<search-web data-route="web" query="{{results.web}}"></search-web>
+				<search-img data-route="images" query="{{results.img}}"></search-img>
+			</neon-animated-pages>
+		</paper-header-panel>
+	</template>
+</dom-module>
+
+<script type="text/javascript">
+	Polymer({
+		is: "google-search",
+
+		behaviors: [
+	      Polymer.NeonSharedElementAnimatableBehavior
+	    ],
+
+		properties: {
+			sharedElements: {
+				value: function() {
+					return {
+						'hero': this.$.googleLogo
+					}
+				}
+			},
+
+			animationConfig: {
+				value: function(){
+					return {
+						'entry': [{
+							name: "fade-in-animation",
+							node: this
+			            },{
+			              name: 'hero-animation',
+			              id: 'hero',
+			              toPage: this
+			            }],
+			            'exit': [{
+							name: "fade-out-animation",
+							node: this
+			            },{
+			              name: 'hero-animation',
+			              id: 'hero',
+			              fromPage: this
+			            }]
+			        }
+				}
+			},
+
+			isMobile: {
+				type: Boolean,
+				value: false,
+				notify: true
+			},
+
+			searchquery: {
+				type: String,
+				notify: true,
+				observer: "_startSearch"
+			},
+
+			searchType: {
+				type: String,
+				value: "web"
+			},
+
+			searched: {
+				type: Number,
+				value: 0
+			}
+		},
+
+		_startSearch: function(data){
+			if(data === "") return this.fire("resetSearch");
+
+			var that = this;
+
+			if (this.searched) {
+				clearTimeout( this.searched );
+				this.searched = setTimeout(function(){
+					console.dir(this.searchquery)
+					document.querySelector("iron-ajax").body = "q=" + that.searchquery;
+					document.querySelector("iron-ajax").generateRequest();
+				}, 200 );
+			} else {
+				this.searched = setTimeout(function(){
+					document.querySelector("iron-ajax").body = "q=" + that.searchquery;
+					document.querySelector("iron-ajax").generateRequest();
+				}, 200 );
+			}
+		},
+
+		_resultSearch: function(err,request){
+			this.results = request.response;
+			console.dir("lol");
+		},
+
+		_goHome: function(){
+			page("/");
+		}
+	})
+</script>

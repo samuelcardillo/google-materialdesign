@@ -1,0 +1,52 @@
+<dom-module id="search-web">
+	<style type="text/css">
+		:host {
+			height: 100vh;
+		}
+		.resultTitle {
+			color: #494949;
+	    	font-size: 18px;
+	    	font-weight: normal;
+	    	text-decoration: none;
+	    	cursor: pointer;
+		}
+
+		.resultSite {
+			color: #7BAC52;
+	    	font-size: 12px;
+	    	line-height: 2px;
+	    	font-weight: normal;
+	    	cursor: pointer;
+		}
+
+		.resultDescription {
+			color: #949494;
+	    	font-size: 14px;
+	    	margin-bottom: 50px;
+		}
+
+		paper-material {
+			  width: 98%;
+			  margin: 16px auto;
+			  padding: 8px;
+			  background-color: white;
+		}
+	</style>
+	<template>
+		<div class="vertical layout">
+			<template is="dom-repeat" items="{{query}}">
+				<paper-material elevation="3">
+					<h1 class="resultTitle">{{item.lienTitre}}</h1>
+					<h2 class="resultSite">{{item.site}}</h2>
+					<p class="resultDescription">{{item.description}}</p>
+				</paper-material>
+			</template>
+		</div>
+	</template>
+</dom-module>
+
+<script type="text/javascript">
+	Polymer({
+		is: "search-web",
+	})
+</script>

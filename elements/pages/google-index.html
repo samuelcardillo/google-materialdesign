@@ -1,0 +1,83 @@
+<dom-module id="google-index">
+	<style type="text/css">
+		:host {
+			text-align: center;
+			margin-top: 100px;
+		}
+		#searchInput {
+			width: 60%;
+			margin: auto;
+			text-align: left;
+    		--paper-input-container-focus-color: linear-gradient(to right, 
+    			#135ce6 0%,#135ce6 17%,
+    			#d13e2a 17%,#d13e2a 34%,
+    			#ffb700 34%,#ffb700 51%,
+    			#135ce6 51%,#135ce6 68%,
+    			#009655 68%,#009655 82%,
+    			#d13e2a 82%);
+		}
+	</style>
+	<template>
+		<img id="googleLogo" width="60%" src="https://www.google.be/images/srpr/logo11w.png">
+		<paper-input-container id="searchInput">
+			<label>Search something...</label>
+			<input
+				is="iron-input" 
+				value="{{searchQuery::input}}" 
+				on-keydown="_startResearch" 
+				autofocus/>
+		</paper-input-container>
+
+		<paper-button on-click="_startResearch">Google Search</paper-button>
+		<paper-button>I'm feeling lucky</paper-button>
+	</template>
+</dom-module>
+
+<script type="text/javascript">
+	Polymer({
+		is: "google-index",
+
+		behaviors: [
+	      Polymer.NeonSharedElementAnimatableBehavior
+	    ],
+
+	    properties: {
+	    	sharedElements: {
+				value: function() {
+					return {
+						'hero': this.$.googleLogo
+					}
+				}
+			},
+
+	    	animationConfig: {
+				value: function(){
+					return {
+						'entry': [{
+			              name: 'hero-animation',
+			              id: 'hero',
+			              toPage: this
+			            }],
+						'exit': [{
+			              name: 'hero-animation',
+			              id: 'hero',
+			              fromPage: this
+			            }]
+			        }
+				}
+			},
+	    },
+
+		_startResearch: function(data){
+			if(data.type === "keydown" && data.keyCode != "13") return false;
+
+			this.fire("startSearch",this.searchQuery);
+			return true;
+		},
+
+		resetSearch: function(){
+			console.dir("reseted !");
+			this.searchQuery = null;
+		}
+	})
+</script>
