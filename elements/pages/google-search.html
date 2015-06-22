@@ -64,9 +64,8 @@
 		<iron-media-query query="(max-width: 601px)" query-matches="{{isMobile}}"></iron-media-query>
 
 		<iron-ajax
-			url="http://37.187.218.147/google/backend.php"
+			url="http://37.187.218.147:5005/search"
 			method="POST"
-			body='q=lol'
 			handle-as="json"
 			on-response="_resultSearch"
 			debounceDuration="300">
@@ -177,12 +176,12 @@
 				clearTimeout( this.searched );
 				this.searched = setTimeout(function(){
 					console.dir(this.searchquery)
-					document.querySelector("iron-ajax").body = "q=" + that.searchquery;
+					document.querySelector("iron-ajax").body = "query=" + that.searchquery;
 					document.querySelector("iron-ajax").generateRequest();
 				}, 200 );
 			} else {
 				this.searched = setTimeout(function(){
-					document.querySelector("iron-ajax").body = "q=" + that.searchquery;
+					document.querySelector("iron-ajax").body = "query=" + that.searchquery;
 					document.querySelector("iron-ajax").generateRequest();
 				}, 200 );
 			}
@@ -190,7 +189,6 @@
 
 		_resultSearch: function(err,request){
 			this.results = request.response;
-			console.dir("lol");
 		},
 
 		_goHome: function(){
